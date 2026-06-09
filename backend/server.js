@@ -1,9 +1,10 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const db = require('./db');
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
@@ -38,6 +39,12 @@ app.delete('/api/completions/:goalId/:date', (req, res) => {
 
 app.get('/api/streak', (req, res) => {
   res.json({ streak: db.getStreak() });
+});
+
+// Serve frontend
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
 });
 
 app.listen(PORT, () => console.log(`FitDay backend → http://localhost:${PORT}`));
